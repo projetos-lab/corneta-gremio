@@ -750,7 +750,7 @@
       try {
         var savedVotes = localStorage.getItem(STORAGE_KEY);
         if (savedVotes) state.userVotes = JSON.parse(savedVotes);
-        if (localStorage.getItem(SUBMITTED_KEY) === 'true') state.hasSubmitted = true;
+        localStorage.removeItem(SUBMITTED_KEY);
       } catch (e) {}
 
       // Busca os totais oficiais em tempo real da Planilha Google
@@ -903,36 +903,32 @@
         });
         container.innerHTML = html;
 
-        // Seção de Confirmação Simples
+        // Seção do Botão Salvar Palpites
         var confirmSection = document.getElementById('confirm-section');
         var btnSubmit = document.getElementById('btn-submit-main');
         var statusText = document.getElementById('confirm-status-text');
         var confirmedActions = document.getElementById('confirmed-actions');
 
-        if (state.hasSubmitted) {
-          confirmSection.classList.add('submitted');
-          btnSubmit.innerHTML = '<span>✅ Seus Palpites Foram Salvos!</span>';
-          btnSubmit.style.backgroundColor = '#1e293b';
-          btnSubmit.style.color = '#00ff85';
-          btnSubmit.style.border = '1px solid #00ff85';
-          statusText.innerHTML = 'Seus palpites foram salvos com sucesso e somados ao placar do grupo!';
+        btnSubmit.style.backgroundColor = '#00ff85';
+        btnSubmit.style.color = '#0b0f17';
+        btnSubmit.style.border = 'none';
+
+        if (count === 18) {
+          btnSubmit.innerHTML = '<span>💾 Salvar Meus 18 Palpites</span>';
+          statusText.textContent = 'Tudo preenchido! Clique abaixo para salvar seus palpites na planilha.';
+        } else if (count > 0) {
+          btnSubmit.innerHTML = '<span>💾 Salvar Palpites (' + count + ' de 18 marcados)</span>';
+          statusText.textContent = 'Você marcou ' + count + ' palpites. Clique para salvar e somar ao placar do grupo.';
+        } else {
+          btnSubmit.innerHTML = '<span>💾 Salvar Palpites</span>';
+          statusText.textContent = 'Toque em D (Derrota), E (Empate) ou V (Vitória) nos confrontos acima.';
+        }
+
+        // Mostra ações de ver tabela e compartilhar se já marcou votos
+        if (count > 0) {
           confirmedActions.classList.remove('hidden');
         } else {
-          confirmSection.classList.remove('submitted');
-          btnSubmit.style.backgroundColor = '#00ff85';
-          btnSubmit.style.color = '#0b0f17';
-          btnSubmit.style.border = 'none';
           confirmedActions.classList.add('hidden');
-          if (count === 18) {
-            btnSubmit.innerHTML = '<span>💾 Salvar Meus 18 Palpites</span>';
-            statusText.textContent = 'Tudo preenchido! Clique abaixo para salvar seus palpites na planilha.';
-          } else if (count > 0) {
-            btnSubmit.innerHTML = '<span>💾 Salvar Palpites (' + count + ' de 18 marcados)</span>';
-            statusText.textContent = 'Você marcou ' + count + ' palpites. Deseja salvar agora ou preencher o restante?';
-          } else {
-            btnSubmit.innerHTML = '<span>💾 Selecione os palpites acima para Salvar</span>';
-            statusText.textContent = 'Toque em D (Derrota), E (Empate) ou V (Vitória) nos confrontos acima.';
-          }
         }
 
         renderStandings();
@@ -992,13 +988,14 @@
       function submitVotesToSheet() {
         var count = Object.keys(state.userVotes).length;
         if (count === 0) {
-          alert('Por favor, selecione ao menos um palpite antes de enviar!');
+          alert('Por favor, selecione ao menos um palpite antes de salvar!');
           return;
         }
 
         var btnSubmit = document.getElementById('btn-submit-main');
-        var originalText = btnSubmit.innerHTML;
         btnSubmit.disabled = true;
+        btnSubmit.style.backgroundColor = '#1e293b';
+        btnSubmit.style.color = '#38bdf8';
         btnSubmit.innerHTML = '<span>⏳ Registrando seus votos na Planilha...</span>';
 
         fetch(GOOGLE_SCRIPT_URL, {
@@ -1008,21 +1005,26 @@
           body: JSON.stringify({ votes: state.userVotes })
         })
         .then(function () {
-          state.hasSubmitted = true;
-          try { localStorage.setItem(SUBMITTED_KEY, 'true'); } catch (e) {}
-          
           var toast = document.getElementById('toast');
           toast.textContent = 'Palpites salvos com sucesso!';
           toast.classList.add('show');
           setTimeout(function(){ toast.classList.remove('show'); }, 3000);
+
+          btnSubmit.style.backgroundColor = '#1e293b';
+          btnSubmit.style.color = '#00ff85';
+          btnSubmit.style.border = '1px solid #00ff85';
+          btnSubmit.innerHTML = '<span>✅ Palpites Salvos com Sucesso!</span>';
+
+          setTimeout(function () {
+            btnSubmit.disabled = false;
+            render();
+          }, 2500);
 
           // Atualiza contadores buscando os novos totais da planilha
           setTimeout(fetchGroupTotals, 1200);
         })
         .catch(function (err) {
           alert('Erro ao conectar com a planilha. Tente novamente em instantes.');
-        })
-        .finally(function () {
           btnSubmit.disabled = false;
           render();
         });
