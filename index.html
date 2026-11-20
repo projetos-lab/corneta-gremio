@@ -18,7 +18,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: 13.5px;
       line-height: 1.4;
-      padding-bottom: 32px;
+      padding-bottom: 72px;
     }
 
     .container {
@@ -130,6 +130,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
+      margin-bottom: 8px;
     }
 
     .tab-btn {
@@ -149,6 +150,59 @@
       background-color: #1e293b;
       border-color: #00ff85;
       color: #ffffff;
+    }
+
+    /* Barra de Progresso no Header */
+    .progress-bar-wrap {
+      background-color: #0f1520;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 5px 8px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background-color: #1e293b;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #00ff85);
+      border-radius: 3px;
+      transition: width 0.25s ease-out;
+    }
+
+    .progress-bar-fill.complete {
+      background: #00ff85;
+      box-shadow: 0 0 8px rgba(0, 255, 133, 0.6);
+    }
+
+    .progress-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: #94a3b8;
+    }
+
+    .progress-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: #94a3b8;
+    }
+
+    .progress-badge.done {
+      background: rgba(0, 255, 133, 0.15);
+      color: #00ff85;
+      border: 1px solid rgba(0, 255, 133, 0.4);
     }
 
     .hidden {
@@ -295,6 +349,138 @@
       color: #00ff85;
     }
 
+    /* Card de Fechamento / Confirmação no Rodapé da Votação */
+    .finish-box {
+      margin-top: 14px;
+      margin-bottom: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background-color: #131a26;
+      border: 1px solid #1e293b;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .finish-box.complete {
+      background: linear-gradient(180deg, #131f2f 0%, #101c2a 100%);
+      border-color: #00ff85;
+      box-shadow: 0 0 16px rgba(0, 255, 133, 0.15);
+    }
+
+    .finish-box-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .finish-box-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+
+    .finish-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @media (min-width: 480px) {
+      .finish-actions {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+
+    .btn-finish-primary {
+      background-color: #00ff85;
+      color: #0b0f17;
+      border: none;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 11px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-finish-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-finish-secondary {
+      background-color: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 11px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-finish-secondary:active {
+      transform: scale(0.97);
+    }
+
+    /* Veredito da Simulação no topo da Tabela */
+    .verdict-card {
+      background: #131a26;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .verdict-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .verdict-item {
+      font-size: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .verdict-item:last-child {
+      border-bottom: none;
+    }
+
+    .verdict-item .label {
+      color: #94a3b8;
+    }
+
+    .verdict-item .val {
+      font-weight: 700;
+    }
+
+    .val-safe {
+      color: #00ff85;
+    }
+
+    .val-danger {
+      color: #ef4444;
+    }
+
     /* Card da Tabela de Classificação */
     .table-card {
       background-color: #131a26;
@@ -432,10 +618,113 @@
       background-color: #0f1520;
     }
 
-    /* Modal / Toast de Notificação */
+    /* Barra Flutuante de Confirmação no Rodapé */
+    .floating-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 15, 23, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #1e293b;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      z-index: 40;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .floating-bar.visible {
+      transform: translateY(0);
+    }
+
+    .floating-bar-info {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .floating-bar-info strong {
+      color: #00ff85;
+      font-size: 13px;
+    }
+
+    /* Modal de Sucesso */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #131a26;
+      border: 1px solid #00ff85;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 133, 0.2);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      text-align: center;
+      transform: scale(0.95);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.show .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-icon {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .modal-desc {
+      font-size: 12.5px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .modal-verdict-box {
+      background: #0b0f17;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* Toast */
     .toast {
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
       background: #00ff85;
@@ -445,7 +734,7 @@
       font-size: 12px;
       font-weight: 800;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      z-index: 100;
+      z-index: 120;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
@@ -458,7 +747,7 @@
 </head>
 <body>
 
-  <!-- Cabeçalho Compacto -->
+  <!-- Cabeçalho Fixo -->
   <header class="header">
     <div class="container">
       <div class="header-top">
@@ -479,18 +768,62 @@
         <button type="button" id="tab-votes" class="tab-btn active">Votação (18 Jogos)</button>
         <button type="button" id="tab-table" class="tab-btn">Classificação (12º ao 20º)</button>
       </nav>
+
+      <!-- Barra de Progresso Interativa -->
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-bg">
+          <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+        <div class="progress-info">
+          <span id="progress-text">0 de 18 jogos palpitados (0%)</span>
+          <span id="progress-badge" class="progress-badge">Em andamento</span>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- Corpo Principal -->
+  <!-- Conteúdo Principal -->
   <main class="container">
     <!-- Seção de Jogos -->
     <section id="view-votes" class="view-section">
       <div id="rounds-container"></div>
+
+      <!-- Card de Fechamento / Confirmação -->
+      <div id="finish-box" class="finish-box">
+        <div id="finish-box-title" class="finish-box-title">Complete seus 18 palpites</div>
+        <div id="finish-box-desc" class="finish-box-desc">Marque a vitória, empate ou derrota de cada rodada acima.</div>
+        <div class="finish-actions">
+          <button type="button" id="btn-finish-confirm" class="btn-finish-primary">
+            <span>📊 Concluir e Ver Tabela Final</span>
+          </button>
+          <button type="button" id="btn-finish-share" class="btn-finish-secondary">
+            <span>📲 Compartilhar no WhatsApp</span>
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- Seção de Tabela de Classificação -->
     <section id="view-table" class="view-section hidden">
+      <!-- Veredito da Simulação -->
+      <div class="verdict-card">
+        <div class="verdict-title">
+          <span>🏆 Veredito da sua Simulação</span>
+        </div>
+        <div class="verdict-item">
+          <span class="label">Destino do Grêmio:</span>
+          <span id="verdict-gremio" class="val val-safe">Calculando...</span>
+        </div>
+        <div class="verdict-item">
+          <span class="label">Vaga Sul-Americana (12º):</span>
+          <span id="verdict-sula" class="val">Calculando...</span>
+        </div>
+        <div class="verdict-item">
+          <span class="label">Rebaixados para a Série B:</span>
+          <span id="verdict-z4" class="val val-danger">Calculando...</span>
+        </div>
+      </div>
+
       <div class="table-card">
         <div class="table-header-meta">
           <span>Classificação Pós-35ª + Seus Palpites</span>
@@ -520,8 +853,49 @@
           Critérios oficiais da CBF: Pontos (P), Vitórias (V), Saldo de Gols (SG) e Gols Pró (GP). Em confrontos diretos, os dois times atualizam ao mesmo tempo.
         </div>
       </div>
+
+      <!-- Botão de Voltar aos Jogos ou Compartilhar no rodapé da tabela -->
+      <div style="margin-top: 14px; display: flex; gap: 8px;">
+        <button type="button" id="btn-back-to-votes" class="btn-finish-secondary" style="flex: 1;">
+          ← Ajustar Palpites
+        </button>
+        <button type="button" id="btn-table-share" class="btn-finish-primary" style="flex: 1;">
+          📲 Copiar no WhatsApp
+        </button>
+      </div>
     </section>
   </main>
+
+  <!-- Barra Flutuante de Confirmação Mobile -->
+  <div id="floating-bar" class="floating-bar">
+    <div class="floating-bar-info">
+      <div>Progresso: <strong id="floating-counter">0/18</strong></div>
+      <span id="floating-sub" style="font-size: 11px;">Palpite todos os jogos</span>
+    </div>
+    <button type="button" id="btn-floating-action" class="btn-finish-primary" style="padding: 8px 14px; font-size: 12px;">
+      Ver Tabela →
+    </button>
+  </div>
+
+  <!-- Modal de Confirmação Concluída -->
+  <div id="modal-success" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-icon">🎉</div>
+      <div class="modal-title">Simulação Concluída!</div>
+      <div class="modal-desc">Você finalizou todos os 18 palpites decisivos da reta final do Brasileirão 2026.</div>
+      
+      <div class="modal-verdict-box" id="modal-summary-content"></div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" id="btn-modal-share" class="btn-finish-primary" style="width: 100%;">
+          📲 Compartilhar no Grupo do WhatsApp
+        </button>
+        <button type="button" id="btn-modal-close" class="btn-finish-secondary" style="width: 100%;">
+          📊 Ver Tabela Completa
+        </button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast" class="toast">Texto copiado para o WhatsApp!</div>
 
@@ -542,7 +916,7 @@
         { id: 'CHA', name: 'Chapecoense',   pts: 21, j: 35, v: 4,  sg: -39, gp: 33 }
       ];
 
-      // 2. LISTA DOS 18 JOGOS CRUCIAIS (6 por rodada, foco no Z4/Sula e confrontos diretos)
+      // 2. LISTA DOS 18 JOGOS CRUCIAIS
       var MATCHES = [
         // 36ª RODADA
         { id: 'm01', round: '36ª RODADA', home: 'Bahia',         away: 'Coritiba',      anchorSide: 'away', anchorId: 'CFC', otherId: null,  directTag: '' },
@@ -575,12 +949,10 @@
         counts: {}
       };
 
-      // Inicializa contadores
       for (var i = 0; i < MATCHES.length; i++) {
         state.counts[MATCHES[i].id] = { D: 0, E: 0, V: 0 };
       }
 
-      // Lê estado salvo localmente ou via URL Hash
       try {
         var saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -590,7 +962,6 @@
         }
       } catch (e) {}
 
-      // Lê da URL caso alguém compartilhou o link
       try {
         var hash = window.location.hash || '';
         if (hash.indexOf('#v=') === 0) {
@@ -611,7 +982,6 @@
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (e) {}
 
-        // Atualiza URL com o hash dos palpites para compartilhamento direto
         try {
           var codeStr = '';
           for (var i = 0; i < MATCHES.length; i++) {
@@ -623,13 +993,11 @@
         } catch (e) {}
       }
 
-      // Trata o clique no botão D, E ou V
       function vote(matchId, pick) {
         var current = state.userVotes[matchId];
         var cnt = state.counts[matchId];
 
         if (current === pick) {
-          // Desmarcar se clicar de novo
           delete state.userVotes[matchId];
           if (cnt[pick] > 0) cnt[pick]--;
         } else {
@@ -640,9 +1008,13 @@
 
         saveState();
         render();
+
+        // Se acabou de completar 18/18, abre o modal de celebração automaticamente!
+        if (Object.keys(state.userVotes).length === 18 && current !== pick) {
+          showCompletionModal();
+        }
       }
 
-      // Calcula classificação
       function getStandings() {
         var table = BASE_TEAMS.map(function (t) {
           return { id: t.id, name: t.name, pts: t.pts, j: t.j, v: t.v, sg: t.sg, gp: t.gp, form: [] };
@@ -688,13 +1060,30 @@
         return table;
       }
 
-      // Renderização
       function render() {
-        // Contador
         var count = Object.keys(state.userVotes).length;
-        document.getElementById('vote-counter').textContent = count + '/18 votados';
+        var pct = Math.round((count / 18) * 100);
 
-        // Renderiza Jogos
+        // Header Counter & Barra de Progresso
+        document.getElementById('vote-counter').textContent = count + '/18 votados';
+        var fill = document.getElementById('progress-bar-fill');
+        var progressText = document.getElementById('progress-text');
+        var progressBadge = document.getElementById('progress-badge');
+
+        fill.style.width = pct + '%';
+        if (count === 18) {
+          fill.classList.add('complete');
+          progressText.textContent = '18 de 18 jogos palpitados (100%)';
+          progressBadge.textContent = 'Concluído';
+          progressBadge.classList.add('done');
+        } else {
+          fill.classList.remove('complete');
+          progressText.textContent = count + ' de 18 jogos palpitados (' + pct + '%)';
+          progressBadge.textContent = 'Em andamento';
+          progressBadge.classList.remove('done');
+        }
+
+        // Render Jogos
         var container = document.getElementById('rounds-container');
         var rounds = ['36ª RODADA', '37ª RODADA', '38ª RODADA'];
         var html = '';
@@ -732,9 +1121,48 @@
         });
         container.innerHTML = html;
 
-        // Renderiza Classificação
-        var tbody = document.getElementById('standings-body');
+        // Card de Fechamento / Confirmação
+        var finishBox = document.getElementById('finish-box');
+        var finishTitle = document.getElementById('finish-box-title');
+        var finishDesc = document.getElementById('finish-box-desc');
+        var btnConfirm = document.getElementById('btn-finish-confirm');
+
+        if (count === 18) {
+          finishBox.classList.add('complete');
+          finishTitle.textContent = '🎉 SIMULAÇÃO 100% CONCLUÍDA!';
+          finishDesc.textContent = 'Todos os 18 jogos da reta final foram definidos. Veja agora o destino do Grêmio e a tabela final!';
+          btnConfirm.innerHTML = '<span>🏆 Ver Classificação & Veredito Final</span>';
+        } else {
+          finishBox.classList.remove('complete');
+          var faltam = 18 - count;
+          finishTitle.textContent = 'Faltam ' + faltam + ' jogos para concluir';
+          finishDesc.textContent = 'Você já palpitou ' + count + ' de 18 confrontos. Preencha todos para ver a classificação matemática completa.';
+          btnConfirm.innerHTML = '<span>📊 Ver Classificação Parcial (' + count + '/18)</span>';
+        }
+
+        // Barra Flutuante Mobile
+        var floatingBar = document.getElementById('floating-bar');
+        var floatingCounter = document.getElementById('floating-counter');
+        var floatingSub = document.getElementById('floating-sub');
+        floatingCounter.textContent = count + '/18';
+        if (count > 0) {
+          floatingBar.classList.add('visible');
+          if (count === 18) {
+            floatingSub.textContent = 'Tudo pronto! Veja a tabela';
+          } else {
+            floatingSub.textContent = 'Faltam ' + (18 - count) + ' jogos';
+          }
+        } else {
+          floatingBar.classList.remove('visible');
+        }
+
+        // Render Tabela & Veredito
+        renderStandings();
+      }
+
+      function renderStandings() {
         var standings = getStandings();
+        var tbody = document.getElementById('standings-body');
         var tableHtml = '';
 
         standings.forEach(function (t, i) {
@@ -752,7 +1180,7 @@
 
           tableHtml += '<tr class="' + rowClass + '">';
           tableHtml +=   '<td class="col-pos ' + posClass + '">' + pos + 'º</td>';
-          tableHtml +=   '<td class="team-cell">' + t.name + '</td>';
+          tableHtml +=   '<td class="team-cell">' + (t.name === 'Grêmio' ? '🇪🇪 ' : '') + t.name + '</td>';
           tableHtml +=   '<td class="col-pts">' + t.pts + '</td>';
           tableHtml +=   '<td class="col-num">' + t.j + '</td>';
           tableHtml +=   '<td class="col-num">' + t.v + '</td>';
@@ -762,37 +1190,79 @@
           tableHtml += '</tr>';
         });
         tbody.innerHTML = tableHtml;
+
+        // Atualiza Veredito no Card Superior
+        var gremio = standings.find(function(t){ return t.name === 'Grêmio'; });
+        var gremioPos = standings.indexOf(gremio) + 12;
+        var sulaTeam = standings[0]; // 12º colocado
+        var z4Teams = standings.slice(5).map(function(t){ return t.name; }).join(', '); // 17º ao 20º
+
+        var elGremio = document.getElementById('verdict-gremio');
+        if (gremio) {
+          if (gremioPos < 17) {
+            elGremio.className = 'val val-safe';
+            elGremio.innerHTML = gremioPos + 'º Lugar (' + gremio.pts + ' pts) • 🟢 SALVO!';
+          } else {
+            elGremio.className = 'val val-danger';
+            elGremio.innerHTML = gremioPos + 'º Lugar (' + gremio.pts + ' pts) • 🔴 REBAIXADO';
+          }
+        }
+
+        document.getElementById('verdict-sula').textContent = '12º ' + sulaTeam.name + ' (' + sulaTeam.pts + ' pts)';
+        document.getElementById('verdict-z4').textContent = z4Teams;
+      }
+
+      function showCompletionModal() {
+        var standings = getStandings();
+        var gremio = standings.find(function(t){ return t.name === 'Grêmio'; });
+        var gremioPos = standings.indexOf(gremio) + 12;
+        var z4Teams = standings.slice(5).map(function(t, idx){ return (17 + idx) + 'º ' + t.name; }).join('<br>');
+
+        var gremioStatus = gremioPos < 17 
+          ? '<span style="color:#00ff85;font-weight:800;">' + gremioPos + 'º Lugar (' + gremio.pts + ' pts) - ESCAPOU DO REBAIXAMENTO! 🇪🇪</span>'
+          : '<span style="color:#ef4444;font-weight:800;">' + gremioPos + 'º Lugar (' + gremio.pts + ' pts) - NO Z-4</span>';
+
+        var summaryHtml = '' +
+          '<div style="margin-bottom:8px;"><strong>Destino do Grêmio:</strong><br>' + gremioStatus + '</div>' +
+          '<div><strong>Zona de Rebaixamento (Z-4):</strong><br><span style="color:#fca5a5;">' + z4Teams + '</span></div>';
+
+        document.getElementById('modal-summary-content').innerHTML = summaryHtml;
+        document.getElementById('modal-success').classList.add('show');
       }
 
       window.voteMatch = vote;
 
-      // Troca de Abas
-      document.getElementById('tab-votes').onclick = function () {
-        this.classList.add('active');
-        document.getElementById('tab-table').classList.remove('active');
-        document.getElementById('view-votes').classList.remove('hidden');
-        document.getElementById('view-table').classList.add('hidden');
-      };
-
-      document.getElementById('tab-table').onclick = function () {
-        this.classList.add('active');
+      // Navegação por Abas
+      function goToTable() {
+        document.getElementById('tab-table').classList.add('active');
         document.getElementById('tab-votes').classList.remove('active');
         document.getElementById('view-table').classList.remove('hidden');
         document.getElementById('view-votes').classList.add('hidden');
-      };
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
 
-      // Limpar
-      document.getElementById('btn-reset').onclick = function () {
-        state.userVotes = {};
-        for (var i = 0; i < MATCHES.length; i++) {
-          state.counts[MATCHES[i].id] = { D: 0, E: 0, V: 0 };
-        }
-        saveState();
-        render();
+      function goToVotes() {
+        document.getElementById('tab-votes').classList.add('active');
+        document.getElementById('tab-table').classList.remove('active');
+        document.getElementById('view-votes').classList.remove('hidden');
+        document.getElementById('view-table').classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('tab-votes').onclick = goToVotes;
+      document.getElementById('tab-table').onclick = goToTable;
+      document.getElementById('btn-back-to-votes').onclick = goToVotes;
+      document.getElementById('btn-finish-confirm').onclick = goToTable;
+      document.getElementById('btn-floating-action').onclick = goToTable;
+
+      // Modal buttons
+      document.getElementById('btn-modal-close').onclick = function () {
+        document.getElementById('modal-success').classList.remove('show');
+        goToTable();
       };
 
       // Copiar WhatsApp
-      document.getElementById('btn-copy').onclick = function () {
+      function copyWhatsApp() {
         var lines = ['🇪🇪 *CORNETA TRICOLOR • BRASILEIRÃO 2026*', ''];
         var rounds = ['36ª RODADA', '37ª RODADA', '38ª RODADA'];
 
@@ -812,11 +1282,11 @@
         std.forEach(function (t, i) {
           var pos = 12 + i;
           var badge = pos === 12 ? '🟢' : (pos >= 17 ? '🔴' : '⚪');
-          lines.push(badge + ' ' + pos + 'º ' + t.name + ' - *' + t.pts + ' pts* (' + t.v + 'V, SG ' + t.sg + ')');
+          lines.push(badge + ' ' + pos + 'º ' + (t.name === 'Grêmio' ? '🇪🇪 ' : '') + t.name + ' - *' + t.pts + ' pts* (' + t.v + 'V, SG ' + t.sg + ')');
         });
 
         lines.push('');
-        lines.push('🔗 Simule você também: ' + 'https://projetos-lab.github.io/corneta-gremio/' + window.location.hash);
+        lines.push('🔗 Simule você também: https://projetos-lab.github.io/corneta-gremio/' + window.location.hash);
 
         var txt = lines.join('\n');
         navigator.clipboard.writeText(txt).then(function () {
@@ -824,6 +1294,24 @@
           toast.classList.add('show');
           setTimeout(function(){ toast.classList.remove('show'); }, 2200);
         });
+      }
+
+      document.getElementById('btn-copy').onclick = copyWhatsApp;
+      document.getElementById('btn-finish-share').onclick = copyWhatsApp;
+      document.getElementById('btn-table-share').onclick = copyWhatsApp;
+      document.getElementById('btn-modal-share').onclick = function () {
+        copyWhatsApp();
+        document.getElementById('modal-success').classList.remove('show');
+      };
+
+      // Limpar
+      document.getElementById('btn-reset').onclick = function () {
+        state.userVotes = {};
+        for (var i = 0; i < MATCHES.length; i++) {
+          state.counts[MATCHES[i].id] = { D: 0, E: 0, V: 0 };
+        }
+        saveState();
+        render();
       };
 
       render();
