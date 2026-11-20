@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axion Made • Visualiseur 3D Studio • AXN-STU-DEC-020</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0C0D0E;
+            --card: #151719;
+            --border: #23272B;
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --accent-gold: #C5A059;
+            --accent-noir: #202022;
+            --accent-blanc: #E5E7EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 1rem 3rem;
+        }
+
+        header {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge-live {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .viewer-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        .controls-card {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .variant-selector {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .color-btn {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #1A1D20;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .color-btn:hover {
+            border-color: #3B424A;
+            color: var(--text-primary);
+        }
+
+        .color-btn.active {
+            border-color: #F3F4F6;
+            background: #23272B;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .color-swatch {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .swatch-gold { background: linear-gradient(135deg, #E6C875, #A0782C); }
+        .swatch-noir { background: #1C1C1E; border-color: rgba(255, 255, 255, 0.3); }
+        .swatch-blanc { background: #E5E7EB; }
+
+        .product-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-label {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-val {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 0.9rem;
+            background: #F3F4F6;
+            color: #0C0D0E;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <span>AXION MADE</span>
+            <span style="font-weight: 300; color: var(--text-secondary);">| Studio 3D</span>
+        </div>
+        <div class="badge-live">Cycles OptiX • 100% CAD</div>
+    </header>
+
+    <div class="container">
+        <div class="viewer-card">
+            <div class="image-wrapper">
+                <img id="main-render" src="dec020_silk_gold.png" alt="AXN-STU-DEC-020 Render">
+            </div>
+
+            <div class="controls-card">
+                <div class="variant-selector">
+                    <button class="color-btn active" onclick="switchColor('gold', 'dec020_silk_gold.png', this)">
+                        <div class="color-swatch swatch-gold"></div>
+                        <span>Silk Gold</span>
+                    </button>
+                    <button class="color-btn" onclick="switchColor('noir', 'dec020_matte_noir.png', this)">
+                        <div class="color-swatch swatch-noir"></div>
+                        <span>Matte Noir</span>
+                    </button>
+                    <button class="color-btn" onclick="switchColor('blanc', 'dec020_matte_blanc.png', this)">
+                        <div class="color-swatch swatch-blanc"></div>
+                        <span>Matte Blanc</span>
+                    </button>
+                </div>
+
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Produit</span>
+                        <span class="meta-val">Panneau Mural Hexagonal</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">SKU</span>
+                        <span class="meta-val">AXN-STU-DEC-020</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Dimensions Réelles</span>
+                        <span class="meta-val">207.8 × 220.0 × 3.5 mm</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Précision FDM</span>
+                        <span class="meta-val">0.16 mm (Bambu X1C)</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Prix Catalogue</span>
+                        <span class="meta-val">89.00 $ CAD</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Statut Carrousel</span>
+                        <span class="meta-val" style="color: #4ade80;">Prêt pour Déploiement</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a id="download-link" href="dec020_silk_gold.png" target="_blank" class="btn-primary">
+                        Ouvrir Image HD Plein Écran ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-note">
+            Axion Made Atelier 3D • Brossard, Québec.<br>
+            Rendu déterministe via Blender 4.5 Cycles OptiX sur RTX 3060.
+        </p>
+    </div>
+
+    <script>
+        function switchColor(variant, filename, btn) {
+            const img = document.getElementById('main-render');
+            const dlink = document.getElementById('download-link');
+            img.style.opacity = '0.3';
+            setTimeout(() => {
+                img.src = filename;
+                dlink.href = filename;
+                img.style.opacity = '1';
+            }, 120);
+
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
