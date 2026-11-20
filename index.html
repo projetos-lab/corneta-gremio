@@ -612,10 +612,10 @@
       <!-- Seção Simples de Confirmação e Envio -->
       <div id="confirm-section" class="confirm-section">
         <div id="confirm-status-text" class="confirm-status-text">
-          Selecione seus palpites acima e confirme abaixo para somar ao placar do grupo.
+          Selecione seus palpites acima e salve abaixo para somar ao placar do grupo.
         </div>
         <button type="button" id="btn-submit-main" class="btn-submit-main">
-          <span>🗳️ Confirmar e Enviar Meus Palpites</span>
+          <span>💾 Salvar Palpites</span>
         </button>
         <div id="confirmed-actions" class="action-row hidden">
           <button type="button" id="btn-view-table-direct" class="btn-sub-action">
@@ -911,11 +911,11 @@
 
         if (state.hasSubmitted) {
           confirmSection.classList.add('submitted');
-          btnSubmit.innerHTML = '<span>✅ Seus Palpites Foram Enviados para a Planilha!</span>';
+          btnSubmit.innerHTML = '<span>✅ Seus Palpites Foram Salvos!</span>';
           btnSubmit.style.backgroundColor = '#1e293b';
           btnSubmit.style.color = '#00ff85';
           btnSubmit.style.border = '1px solid #00ff85';
-          statusText.innerHTML = 'Seus votos foram registrados com sucesso no placar coletivo. Os números acima incluem os seus palpites!';
+          statusText.innerHTML = 'Seus palpites foram salvos com sucesso e somados ao placar do grupo!';
           confirmedActions.classList.remove('hidden');
         } else {
           confirmSection.classList.remove('submitted');
@@ -924,13 +924,13 @@
           btnSubmit.style.border = 'none';
           confirmedActions.classList.add('hidden');
           if (count === 18) {
-            btnSubmit.innerHTML = '<span>🗳️ Confirmar e Enviar meus 18 Palpites</span>';
-            statusText.textContent = 'Tudo preenchido! Clique abaixo para confirmar e somar ao placar do grupo.';
+            btnSubmit.innerHTML = '<span>💾 Salvar Meus 18 Palpites</span>';
+            statusText.textContent = 'Tudo preenchido! Clique abaixo para salvar seus palpites na planilha.';
           } else if (count > 0) {
-            btnSubmit.innerHTML = '<span>🗳️ Confirmar e Enviar (' + count + ' de 18 marcados)</span>';
-            statusText.textContent = 'Você marcou ' + count + ' palpites. Deseja enviar agora ou preencher o restante?';
+            btnSubmit.innerHTML = '<span>💾 Salvar Palpites (' + count + ' de 18 marcados)</span>';
+            statusText.textContent = 'Você marcou ' + count + ' palpites. Deseja salvar agora ou preencher o restante?';
           } else {
-            btnSubmit.innerHTML = '<span>🗳️ Selecione os palpites acima para Enviar</span>';
+            btnSubmit.innerHTML = '<span>💾 Selecione os palpites acima para Salvar</span>';
             statusText.textContent = 'Toque em D (Derrota), E (Empate) ou V (Vitória) nos confrontos acima.';
           }
         }
@@ -1012,7 +1012,7 @@
           try { localStorage.setItem(SUBMITTED_KEY, 'true'); } catch (e) {}
           
           var toast = document.getElementById('toast');
-          toast.textContent = 'Palpites enviados e somados com sucesso!';
+          toast.textContent = 'Palpites salvos com sucesso!';
           toast.classList.add('show');
           setTimeout(function(){ toast.classList.remove('show'); }, 3000);
 
