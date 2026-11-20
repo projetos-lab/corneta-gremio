@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Simulador Reta Final • Brasileirão 2026</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0b0f17;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.4;
+      padding-bottom: 32px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    /* Cabeçalho Fixo Superior */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background-color: rgba(11, 15, 23, 0.98);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1e293b;
+      padding: 10px 0 8px 0;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title span.badge {
+      background: #1e293b;
+      color: #00ff85;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 255, 133, 0.3);
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 1px;
+    }
+
+    .subtitle strong {
+      color: #00ff85;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-action {
+      border: 1px solid #1e293b;
+      background-color: #131a26;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-action:active {
+      transform: scale(0.96);
+    }
+
+    .btn-reset:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .btn-copy {
+      background-color: #00ff85;
+      border-color: #00ff85;
+      color: #0b0f17;
+      font-weight: 700;
+    }
+
+    .btn-copy.copied {
+      background-color: #38bdf8;
+      border-color: #38bdf8;
+      color: #0b0f17;
+    }
+
+    /* Abas de Navegação */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      background-color: #131a26;
+      border: 1px solid #1e293b;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background-color: #1e293b;
+      border-color: #00ff85;
+      color: #ffffff;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Grupos de Rodada */
+    .view-section {
+      padding-top: 10px;
+    }
+
+    .round-group {
+      margin-bottom: 14px;
+    }
+
+    .round-header {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      padding: 4px 6px 6px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .round-header .badge-round {
+      color: #38bdf8;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .match-list {
+      background-color: #131a26;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    /* Linha do Jogo */
+    .match-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .match-row:last-child {
+      border-bottom: none;
+    }
+
+    .match-info {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      min-width: 0;
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .team-anchor {
+      color: #00ff85;
+      font-weight: 800;
+    }
+
+    .team-other {
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .versus {
+      color: #64748b;
+      font-size: 11px;
+      margin: 0 1px;
+    }
+
+    .direct-tag {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #fb923c;
+      background: rgba(251, 146, 60, 0.15);
+      border: 1px solid rgba(251, 146, 60, 0.35);
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin-left: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Botões Interativos D E V */
+    .vote-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .vote-btn {
+      min-width: 44px;
+      height: 30px;
+      padding: 0 6px;
+      border-radius: 6px;
+      border: 1px solid #283548;
+      background-color: #0b0f17;
+      color: #94a3b8;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: all 0.12s ease;
+    }
+
+    .vote-btn:active {
+      transform: scale(0.93);
+    }
+
+    .vote-btn .cnt {
+      font-size: 10px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    /* Cores ao Votar */
+    .vote-btn.selected-D {
+      background-color: rgba(239, 68, 68, 0.25);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    .vote-btn.selected-E {
+      background-color: rgba(245, 158, 11, 0.25);
+      border-color: #f59e0b;
+      color: #fcd34d;
+    }
+
+    .vote-btn.selected-V {
+      background-color: rgba(0, 255, 133, 0.25);
+      border-color: #00ff85;
+      color: #00ff85;
+    }
+
+    /* Card da Tabela de Classificação */
+    .table-card {
+      background-color: #131a26;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table-header-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-bottom: 1px solid #1e293b;
+      font-size: 11px;
+      color: #94a3b8;
+      background-color: #0f1520;
+    }
+
+    .legend-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10.5px;
+    }
+
+    .leg-sula { color: #00ff85; font-weight: 700; }
+    .leg-z4 { color: #ef4444; font-weight: 700; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      font-size: 10px;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      padding: 7px 6px;
+      border-bottom: 1px solid #1e293b;
+      background-color: #0f1520;
+    }
+
+    td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #1e293b;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .col-pos {
+      width: 28px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .col-num {
+      text-align: center;
+      width: 28px;
+      color: #cbd5e1;
+    }
+
+    .col-pts {
+      text-align: center;
+      width: 32px;
+      font-weight: 900;
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .pos-sula { color: #00ff85; }
+    .pos-z4 { color: #ef4444; }
+
+    .row-z4 { background-color: rgba(239, 68, 68, 0.08); }
+    .row-sula { background-color: rgba(0, 255, 133, 0.05); }
+
+    .team-cell {
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    /* Pílulas de Forma (36ª, 37ª, 38ª) */
+    .form-pills {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 800;
+    }
+
+    .pill-V {
+      background-color: rgba(0, 255, 133, 0.2);
+      color: #00ff85;
+      border: 1px solid rgba(0, 255, 133, 0.45);
+    }
+
+    .pill-E {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+    }
+
+    .pill-D {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+    }
+
+    .pill-none {
+      background-color: #0b0f17;
+      color: #475569;
+      border: 1px solid #1e293b;
+    }
+
+    .table-footer {
+      padding: 8px 10px;
+      font-size: 10.5px;
+      color: #64748b;
+      border-top: 1px solid #1e293b;
+      background-color: #0f1520;
+    }
+
+    /* Modal / Toast de Notificação */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00ff85;
+      color: #0b0f17;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho Compacto -->
+  <header class="header">
+    <div class="container">
+      <div class="header-top">
+        <div class="title-wrap">
+          <div class="title">
+            <span>Brasileirão 2026</span>
+            <span class="badge">Reta Final</span>
+          </div>
+          <div class="subtitle">36ª a 38ª Rodada • <strong id="vote-counter">0/18 votados</strong></div>
+        </div>
+        <div class="header-actions">
+          <button type="button" id="btn-reset" class="btn-action btn-reset" title="Limpar votos">Zerar</button>
+          <button type="button" id="btn-copy" class="btn-action btn-copy">Copiar WhatsApp</button>
+        </div>
+      </div>
+
+      <nav class="tabs">
+        <button type="button" id="tab-votes" class="tab-btn active">Votação (18 Jogos)</button>
+        <button type="button" id="tab-table" class="tab-btn">Classificação (12º ao 20º)</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Corpo Principal -->
+  <main class="container">
+    <!-- Seção de Jogos -->
+    <section id="view-votes" class="view-section">
+      <div id="rounds-container"></div>
+    </section>
+
+    <!-- Seção de Tabela de Classificação -->
+    <section id="view-table" class="view-section hidden">
+      <div class="table-card">
+        <div class="table-header-meta">
+          <span>Classificação Pós-35ª + Seus Palpites</span>
+          <div class="legend-wrap">
+            <span class="leg-sula">● 12º Sul-Americana</span>
+            <span class="leg-z4">● 17º–20º Z-4</span>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-pos">#</th>
+                <th>Time</th>
+                <th class="col-pts">P</th>
+                <th class="col-num">J</th>
+                <th class="col-num">V</th>
+                <th class="col-num">SG</th>
+                <th class="col-num">GP</th>
+                <th>36ª–38ª</th>
+              </tr>
+            </thead>
+            <tbody id="standings-body"></tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          Critérios oficiais da CBF: Pontos (P), Vitórias (V), Saldo de Gols (SG) e Gols Pró (GP). Em confrontos diretos, os dois times atualizam ao mesmo tempo.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast">Texto copiado para o WhatsApp!</div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // 1. DADOS BASE REAIS (PÓS-35ª RODADA)
+      var BASE_TEAMS = [
+        { id: 'BOT', name: 'Botafogo',      pts: 42, j: 35, v: 11, sg: -11, gp: 46 },
+        { id: 'CFC', name: 'Coritiba',      pts: 42, j: 35, v: 11, sg: -12, gp: 40 },
+        { id: 'VIT', name: 'Vitória',       pts: 41, j: 35, v: 11, sg: -15, gp: 37 },
+        { id: 'MIR', name: 'Mirassol',      pts: 41, j: 35, v: 10, sg: -9,  gp: 39 },
+        { id: 'COR', name: 'Corinthians',   pts: 40, j: 35, v: 10, sg: -2,  gp: 40 },
+        { id: 'INT', name: 'Internacional', pts: 38, j: 35, v: 9,  sg: -5,  gp: 39 },
+        { id: 'GRE', name: 'Grêmio',        pts: 38, j: 35, v: 9,  sg: -9,  gp: 38 },
+        { id: 'REM', name: 'Remo',          pts: 32, j: 35, v: 7,  sg: -18, gp: 39 },
+        { id: 'CHA', name: 'Chapecoense',   pts: 21, j: 35, v: 4,  sg: -39, gp: 33 }
+      ];
+
+      // 2. LISTA DOS 18 JOGOS CRUCIAIS (6 por rodada, foco no Z4/Sula e confrontos diretos)
+      var MATCHES = [
+        // 36ª RODADA
+        { id: 'm01', round: '36ª RODADA', home: 'Bahia',         away: 'Coritiba',      anchorSide: 'away', anchorId: 'CFC', otherId: null,  directTag: '' },
+        { id: 'm02', round: '36ª RODADA', home: 'Fluminense',    away: 'Mirassol',      anchorSide: 'away', anchorId: 'MIR', otherId: null,  directTag: '' },
+        { id: 'm03', round: '36ª RODADA', home: 'Internacional', away: 'Vitória',       anchorSide: 'home', anchorId: 'INT', otherId: 'VIT', directTag: 'Confronto Direto' },
+        { id: 'm04', round: '36ª RODADA', home: 'Botafogo',      away: 'São Paulo',     anchorSide: 'home', anchorId: 'BOT', otherId: null,  directTag: '' },
+        { id: 'm05', round: '36ª RODADA', home: 'Santos',        away: 'Grêmio',        anchorSide: 'away', anchorId: 'GRE', otherId: null,  directTag: '' },
+        { id: 'm06', round: '36ª RODADA', home: 'Atlético-MG',   away: 'Corinthians',   anchorSide: 'away', anchorId: 'COR', otherId: null,  directTag: '' },
+
+        // 37ª RODADA
+        { id: 'm07', round: '37ª RODADA', home: 'Botafogo',      away: 'Bahia',         anchorSide: 'home', anchorId: 'BOT', otherId: null,  directTag: '' },
+        { id: 'm08', round: '37ª RODADA', home: 'Coritiba',      away: 'Flamengo',      anchorSide: 'home', anchorId: 'CFC', otherId: null,  directTag: '' },
+        { id: 'm09', round: '37ª RODADA', home: 'Vitória',       away: 'Santos',        anchorSide: 'home', anchorId: 'VIT', otherId: null,  directTag: '' },
+        { id: 'm10', round: '37ª RODADA', home: 'Corinthians',   away: 'Grêmio',        anchorSide: 'away', anchorId: 'GRE', otherId: 'COR', directTag: 'Confronto Direto' },
+        { id: 'm11', round: '37ª RODADA', home: 'Mirassol',      away: 'Athletico-PR',  anchorSide: 'home', anchorId: 'MIR', otherId: null,  directTag: '' },
+        { id: 'm12', round: '37ª RODADA', home: 'Internacional', away: 'Bragantino',    anchorSide: 'home', anchorId: 'INT', otherId: null,  directTag: '' },
+
+        // 38ª RODADA
+        { id: 'm13', round: '38ª RODADA', home: 'Vasco',         away: 'Vitória',       anchorSide: 'away', anchorId: 'VIT', otherId: null,  directTag: '' },
+        { id: 'm14', round: '38ª RODADA', home: 'Santos',        away: 'Botafogo',      anchorSide: 'away', anchorId: 'BOT', otherId: null,  directTag: '' },
+        { id: 'm15', round: '38ª RODADA', home: 'Palmeiras',     away: 'Coritiba',      anchorSide: 'away', anchorId: 'CFC', otherId: null,  directTag: '' },
+        { id: 'm16', round: '38ª RODADA', home: 'Cruzeiro',      away: 'Internacional', anchorSide: 'away', anchorId: 'INT', otherId: null,  directTag: '' },
+        { id: 'm17', round: '38ª RODADA', home: 'Grêmio',        away: 'Mirassol',      anchorSide: 'home', anchorId: 'GRE', otherId: 'MIR', directTag: 'Confronto Direto' },
+        { id: 'm18', round: '38ª RODADA', home: 'Remo',          away: 'Corinthians',   anchorSide: 'away', anchorId: 'COR', otherId: 'REM', directTag: 'Remo x Timão' }
+      ];
+
+      var STORAGE_KEY = 'br2026_palpites_reta_final';
+      var state = {
+        userVotes: {},
+        counts: {}
+      };
+
+      // Inicializa contadores
+      for (var i = 0; i < MATCHES.length; i++) {
+        state.counts[MATCHES[i].id] = { D: 0, E: 0, V: 0 };
+      }
+
+      // Lê estado salvo localmente ou via URL Hash
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (parsed.userVotes) state.userVotes = parsed.userVotes;
+          if (parsed.counts) state.counts = parsed.counts;
+        }
+      } catch (e) {}
+
+      // Lê da URL caso alguém compartilhou o link
+      try {
+        var hash = window.location.hash || '';
+        if (hash.indexOf('#v=') === 0) {
+          var code = hash.slice(3).toUpperCase();
+          for (var idx = 0; idx < MATCHES.length && idx < code.length; idx++) {
+            var ch = code.charAt(idx);
+            if (ch === 'D' || ch === 'E' || ch === 'V') {
+              var mId = MATCHES[idx].id;
+              state.userVotes[mId] = ch;
+              state.counts[mId][ch] = (state.counts[mId][ch] || 0) + 1;
+            }
+          }
+        }
+      } catch (e) {}
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {}
+
+        // Atualiza URL com o hash dos palpites para compartilhamento direto
+        try {
+          var codeStr = '';
+          for (var i = 0; i < MATCHES.length; i++) {
+            codeStr += state.userVotes[MATCHES[i].id] || '-';
+          }
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#v=' + codeStr);
+          }
+        } catch (e) {}
+      }
+
+      // Trata o clique no botão D, E ou V
+      function vote(matchId, pick) {
+        var current = state.userVotes[matchId];
+        var cnt = state.counts[matchId];
+
+        if (current === pick) {
+          // Desmarcar se clicar de novo
+          delete state.userVotes[matchId];
+          if (cnt[pick] > 0) cnt[pick]--;
+        } else {
+          if (current && cnt[current] > 0) cnt[current]--;
+          state.userVotes[matchId] = pick;
+          cnt[pick] = (cnt[pick] || 0) + 1;
+        }
+
+        saveState();
+        render();
+      }
+
+      // Calcula classificação
+      function getStandings() {
+        var table = BASE_TEAMS.map(function (t) {
+          return { id: t.id, name: t.name, pts: t.pts, j: t.j, v: t.v, sg: t.sg, gp: t.gp, form: [] };
+        });
+        var map = {};
+        table.forEach(function (t) { map[t.id] = t; });
+
+        MATCHES.forEach(function (m) {
+          var pick = state.userVotes[m.id];
+          var anchor = map[m.anchorId];
+          var other = m.otherId ? map[m.otherId] : null;
+
+          if (!pick) {
+            if (anchor) anchor.form.push('-');
+            if (other) other.form.push('-');
+            return;
+          }
+
+          if (anchor) {
+            anchor.j++;
+            anchor.form.push(pick);
+            if (pick === 'V') { anchor.pts += 3; anchor.v += 1; anchor.sg += 1; anchor.gp += 1; }
+            else if (pick === 'E') { anchor.pts += 1; }
+            else if (pick === 'D') { anchor.sg -= 1; }
+          }
+
+          if (other) {
+            other.j++;
+            if (pick === 'V') { other.form.push('D'); other.sg -= 1; }
+            else if (pick === 'E') { other.form.push('E'); other.pts += 1; }
+            else if (pick === 'D') { other.form.push('V'); other.pts += 3; other.v += 1; other.sg += 1; other.gp += 1; }
+          }
+        });
+
+        table.sort(function (a, b) {
+          if (b.pts !== a.pts) return b.pts - a.pts;
+          if (b.v !== a.v) return b.v - a.v;
+          if (b.sg !== a.sg) return b.sg - a.sg;
+          if (b.gp !== a.gp) return b.gp - a.gp;
+          return a.name.localeCompare(b.name);
+        });
+
+        return table;
+      }
+
+      // Renderização
+      function render() {
+        // Contador
+        var count = Object.keys(state.userVotes).length;
+        document.getElementById('vote-counter').textContent = count + '/18 votados';
+
+        // Renderiza Jogos
+        var container = document.getElementById('rounds-container');
+        var rounds = ['36ª RODADA', '37ª RODADA', '38ª RODADA'];
+        var html = '';
+
+        rounds.forEach(function (rnd) {
+          html += '<div class="round-group">';
+          html += '<div class="round-header"><span>' + rnd + '</span><span class="badge-round">6 confrontos</span></div>';
+          html += '<div class="match-list">';
+
+          MATCHES.filter(function(m){ return m.round === rnd; }).forEach(function (m) {
+            var myPick = state.userVotes[m.id];
+            var cnt = state.counts[m.id];
+
+            var homeHtml = m.anchorSide === 'home'
+              ? '<span class="team-anchor">' + m.home + '</span>'
+              : '<span class="team-other">' + m.home + '</span>';
+
+            var awayHtml = m.anchorSide === 'away'
+              ? '<span class="team-anchor">' + m.away + '</span>'
+              : '<span class="team-other">' + m.away + '</span>';
+
+            var tag = m.directTag ? '<span class="direct-tag">' + m.directTag + '</span>' : '';
+
+            html += '<div class="match-row">';
+            html +=   '<div class="match-info">' + homeHtml + '<span class="versus">x</span>' + awayHtml + tag + '</div>';
+            html +=   '<div class="vote-group">';
+            html +=     '<button type="button" onclick="window.voteMatch(\'' + m.id + '\', \'D\')" class="vote-btn ' + (myPick === 'D' ? 'selected-D' : '') + '">D <span class="cnt">(' + cnt.D + ')</span></button>';
+            html +=     '<button type="button" onclick="window.voteMatch(\'' + m.id + '\', \'E\')" class="vote-btn ' + (myPick === 'E' ? 'selected-E' : '') + '">E <span class="cnt">(' + cnt.E + ')</span></button>';
+            html +=     '<button type="button" onclick="window.voteMatch(\'' + m.id + '\', \'V\')" class="vote-btn ' + (myPick === 'V' ? 'selected-V' : '') + '">V <span class="cnt">(' + cnt.V + ')</span></button>';
+            html +=   '</div>';
+            html += '</div>';
+          });
+
+          html += '</div></div>';
+        });
+        container.innerHTML = html;
+
+        // Renderiza Classificação
+        var tbody = document.getElementById('standings-body');
+        var standings = getStandings();
+        var tableHtml = '';
+
+        standings.forEach(function (t, i) {
+          var pos = 12 + i;
+          var rowClass = pos === 12 ? 'row-sula' : (pos >= 17 ? 'row-z4' : '');
+          var posClass = pos === 12 ? 'pos-sula' : (pos >= 17 ? 'pos-z4' : '');
+          var sgText = t.sg > 0 ? ('+' + t.sg) : t.sg;
+
+          var pills = '<span class="form-pills">';
+          t.form.forEach(function (res) {
+            var cls = res === 'V' ? 'pill-V' : (res === 'E' ? 'pill-E' : (res === 'D' ? 'pill-D' : 'pill-none'));
+            pills += '<span class="pill ' + cls + '">' + (res === '-' ? '•' : res) + '</span>';
+          });
+          pills += '</span>';
+
+          tableHtml += '<tr class="' + rowClass + '">';
+          tableHtml +=   '<td class="col-pos ' + posClass + '">' + pos + 'º</td>';
+          tableHtml +=   '<td class="team-cell">' + t.name + '</td>';
+          tableHtml +=   '<td class="col-pts">' + t.pts + '</td>';
+          tableHtml +=   '<td class="col-num">' + t.j + '</td>';
+          tableHtml +=   '<td class="col-num">' + t.v + '</td>';
+          tableHtml +=   '<td class="col-num">' + sgText + '</td>';
+          tableHtml +=   '<td class="col-num">' + t.gp + '</td>';
+          tableHtml +=   '<td>' + pills + '</td>';
+          tableHtml += '</tr>';
+        });
+        tbody.innerHTML = tableHtml;
+      }
+
+      window.voteMatch = vote;
+
+      // Troca de Abas
+      document.getElementById('tab-votes').onclick = function () {
+        this.classList.add('active');
+        document.getElementById('tab-table').classList.remove('active');
+        document.getElementById('view-votes').classList.remove('hidden');
+        document.getElementById('view-table').classList.add('hidden');
+      };
+
+      document.getElementById('tab-table').onclick = function () {
+        this.classList.add('active');
+        document.getElementById('tab-votes').classList.remove('active');
+        document.getElementById('view-table').classList.remove('hidden');
+        document.getElementById('view-votes').classList.add('hidden');
+      };
+
+      // Limpar
+      document.getElementById('btn-reset').onclick = function () {
+        state.userVotes = {};
+        for (var i = 0; i < MATCHES.length; i++) {
+          state.counts[MATCHES[i].id] = { D: 0, E: 0, V: 0 };
+        }
+        saveState();
+        render();
+      };
+
+      // Copiar WhatsApp
+      document.getElementById('btn-copy').onclick = function () {
+        var lines = ['⚽ *SIMULAÇÃO RETA FINAL • BRASILEIRÃO 2026*', ''];
+        var rounds = ['36ª RODADA', '37ª RODADA', '38ª RODADA'];
+
+        rounds.forEach(function (rnd) {
+          lines.push('*' + rnd + '*');
+          MATCHES.filter(function(m){ return m.round === rnd; }).forEach(function (m) {
+            var p = state.userVotes[m.id] || '-';
+            var anchorName = m.anchorSide === 'home' ? m.home : m.away;
+            var desc = p === 'V' ? 'Vitória do ' + anchorName : (p === 'E' ? 'Empate' : (p === 'D' ? 'Derrota do ' + anchorName : 'Sem palpite'));
+            lines.push('• ' + m.home + ' x ' + m.away + ': *' + p + '* (' + desc + ')');
+          });
+          lines.push('');
+        });
+
+        lines.push('📊 *CLASSIFICAÇÃO FINAL SIMULADA (12º ao 20º):*');
+        var std = getStandings();
+        std.forEach(function (t, i) {
+          var pos = 12 + i;
+          var badge = pos === 12 ? '🟢' : (pos >= 17 ? '🔴' : '⚪');
+          lines.push(badge + ' ' + pos + 'º ' + t.name + ' - *' + t.pts + ' pts* (' + t.v + 'V, SG ' + t.sg + ')');
+        });
+
+        lines.push('');
+        lines.push('🔗 Simule você também: ' + window.location.href);
+
+        var txt = lines.join('\n');
+        navigator.clipboard.writeText(txt).then(function () {
+          var toast = document.getElementById('toast');
+          toast.classList.add('show');
+          setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+        });
+      };
+
+      render();
+    })();
+  </script>
+</body>
+</html>
