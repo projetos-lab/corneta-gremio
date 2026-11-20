@@ -381,6 +381,39 @@
     }
 
     /* Card da Tabela de Classificação */
+    .table-mode-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+      background: #0f1520;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+    }
+
+    .mode-toggle-btn {
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .mode-toggle-btn.active {
+      background: #1e293b;
+      color: #00ff85;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
     .table-card {
       background-color: #131a26;
       border: 1px solid #1e293b;
@@ -597,9 +630,19 @@
 
     <!-- Seção de Tabela de Classificação -->
     <section id="view-table" class="view-section hidden">
+      <!-- Seletor de Modo da Tabela -->
+      <div class="table-mode-toggle">
+        <button type="button" id="btn-mode-user" class="mode-toggle-btn active">
+          👤 Meus Palpites
+        </button>
+        <button type="button" id="btn-mode-group" class="mode-toggle-btn">
+          👥 Consenso da Galera
+        </button>
+      </div>
+
       <div class="table-card">
         <div class="table-header-meta">
-          <span>Classificação Pós-35ª + Seus Palpites</span>
+          <span id="table-meta-title">Classificação Pós-35ª • Seus Palpites</span>
           <div class="legend-wrap">
             <span class="leg-sula">● 12º Sul-Americana</span>
             <span class="leg-z4">● 17º–20º Z-4</span>
@@ -694,7 +737,8 @@
         userVotes: {},
         groupTotals: {},
         totalVoters: 0,
-        hasSubmitted: false
+        hasSubmitted: false,
+        tableMode: 'user' // 'user' ou 'group'
       };
 
       // Inicializa totais padrão
@@ -753,7 +797,8 @@
         render();
       }
 
-      function getStandings() {
+      function getStandings(mode) {
+        mode = mode || state.tableMode || 'user';
         var table = BASE_TEAMS.map(function (t) {
           return { id: t.id, name: t.name, pts: t.pts, j: t.j, v: t.v, sg: t.sg, gp: t.gp, form: [] };
         });
@@ -761,7 +806,24 @@
         table.forEach(function (t) { map[t.id] = t; });
 
         MATCHES.forEach(function (m) {
-          var pick = state.userVotes[m.id];
+          var pick = null;
+          if (mode === 'user') {
+            pick = state.userVotes[m.id];
+          } else {
+            // Consenso da Galera: seleciona o palpite com maior número de votos
+            var totals = state.groupTotals[m.id];
+            if (totals) {
+              var d = totals.D || 0;
+              var e = totals.E || 0;
+              var v = totals.V || 0;
+              if (d > 0 || e > 0 || v > 0) {
+                if (v >= e && v >= d) pick = 'V';
+                else if (e >= d && e >= v) pick = 'E';
+                else pick = 'D';
+              }
+            }
+          }
+
           var anchor = map[m.anchorId];
           var other = m.otherId ? map[m.otherId] : null;
 
@@ -877,9 +939,27 @@
       }
 
       function renderStandings() {
-        var standings = getStandings();
+        var mode = state.tableMode || 'user';
+        var standings = getStandings(mode);
         var tbody = document.getElementById('standings-body');
         var tableHtml = '';
+
+        // Atualiza botões seletores e título
+        var btnUser = document.getElementById('btn-mode-user');
+        var btnGroup = document.getElementById('btn-mode-group');
+        var metaTitle = document.getElementById('table-meta-title');
+        
+        if (btnUser && btnGroup) {
+          if (mode === 'user') {
+            btnUser.classList.add('active');
+            btnGroup.classList.remove('active');
+            if (metaTitle) metaTitle.textContent = 'Classificação Pós-35ª • Seus Palpites';
+          } else {
+            btnUser.classList.remove('active');
+            btnGroup.classList.add('active');
+            if (metaTitle) metaTitle.textContent = 'Classificação Pós-35ª • Consenso da Galera (' + state.totalVoters + ' votos)';
+          }
+        }
 
         standings.forEach(function (t, i) {
           var pos = 12 + i;
@@ -973,15 +1053,43 @@
       document.getElementById('btn-view-table-direct').onclick = goToTable;
       document.getElementById('btn-submit-main').onclick = submitVotesToSheet;
 
+      // Seletores de Modo da Tabela (Meus Palpites vs Consenso do Grupo)
+      document.getElementById('btn-mode-user').onclick = function () {
+        state.tableMode = 'user';
+        renderStandings();
+      };
+      document.getElementById('btn-mode-group').onclick = function () {
+        state.tableMode = 'group';
+        renderStandings();
+      };
+
       // Copiar WhatsApp
       function copyWhatsApp() {
-        var lines = ['🇪🇪 *CORNETA TRICOLOR • BRASILEIRÃO 2026*', ''];
+        var mode = state.tableMode || 'user';
+        var modeTitle = mode === 'group'
+          ? '🇪🇪 *CORNETA TRICOLOR • CONSENSO DA GALERA (' + state.totalVoters + ' palpites)*'
+          : '🇪🇪 *CORNETA TRICOLOR • MEUS PALPITES*';
+
+        var lines = [modeTitle, ''];
         var rounds = ['36ª RODADA', '37ª RODADA', '38ª RODADA'];
 
         rounds.forEach(function (rnd) {
           lines.push('*' + rnd + '*');
           MATCHES.filter(function(m){ return m.round === rnd; }).forEach(function (m) {
-            var p = state.userVotes[m.id] || '-';
+            var p = '-';
+            if (mode === 'user') {
+              p = state.userVotes[m.id] || '-';
+            } else {
+              var totals = state.groupTotals[m.id];
+              if (totals) {
+                var d = totals.D || 0, e = totals.E || 0, v = totals.V || 0;
+                if (d > 0 || e > 0 || v > 0) {
+                  if (v >= e && v >= d) p = 'V';
+                  else if (e >= d && e >= v) p = 'E';
+                  else p = 'D';
+                }
+              }
+            }
             var anchorName = m.anchorSide === 'home' ? m.home : m.away;
             var desc = p === 'V' ? 'Vitória do ' + anchorName : (p === 'E' ? 'Empate' : (p === 'D' ? 'Derrota do ' + anchorName : 'Sem palpite'));
             lines.push('• ' + m.home + ' x ' + m.away + ': *' + p + '* (' + desc + ')');
@@ -990,7 +1098,7 @@
         });
 
         lines.push('📊 *CLASSIFICAÇÃO FINAL SIMULADA (12º ao 20º):*');
-        var std = getStandings();
+        var std = getStandings(mode);
         std.forEach(function (t, i) {
           var pos = 12 + i;
           var badge = pos === 12 ? '🟢' : (pos >= 17 ? '🔴' : '⚪');
